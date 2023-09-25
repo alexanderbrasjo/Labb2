@@ -1,10 +1,14 @@
 ﻿using System.Reflection.Metadata.Ecma335;
+// Jag rekommenderar att du gör en Cart class och en CartItem class.
+// CartItem ska innehålla en produkt och en int som representerar antal av produkten.
+// Cart ska innehålla en lista av CartItem.
 
 namespace Labb2
 {
     internal class Program
     {
         static List<Customer> customers = new List<Customer>();
+        // Byt ut denna lista av Product mot en Cart class.
         static List<Product> products = new List<Product>();
         static Customer activeCustomer;
         //public Program()
@@ -12,11 +16,11 @@ namespace Labb2
         //    AddRegistratedCustomers();
         //    AddRegistratedProducts();
         //}
-        
+
 
         static void Main(string[] args)
         {
-            
+
             RunProgram();
             //foreach(Customer c in customers)
             //{
@@ -146,7 +150,7 @@ namespace Labb2
             {
                 Console.Write($" I want the product on line: ");
                 int productChoice = Convert.ToInt32(Console.ReadLine());
-                
+
                 Product shoppedProduct = products.ElementAt(productChoice - 1);
                 Console.Write($"{shoppedProduct.name}, How many? ");
                 int countOfProduct = Convert.ToInt32(Console.ReadLine());
@@ -230,7 +234,7 @@ namespace Labb2
                     return true;
                 }
             }
-            
+
             Console.WriteLine($"{userName} is not a valid username");
             Console.WriteLine($"Maybe you haven't registered an account yet, Do you like to registrate a new account? Press Y or N.");
             string answerInput = Console.ReadLine().ToUpper();
@@ -244,9 +248,12 @@ namespace Labb2
             return false;
 
         }
+        // Denna bör skrivas (eftersom den kan returnera null):
+        // static Customer? GetCustomer(string user)
+        //      titta här ^
         static Customer GetCustomer(string user)
         {
-            foreach(Customer c in customers) 
+            foreach(Customer c in customers)
             {
                 if (c.name.Equals(user))
                 {
@@ -255,12 +262,19 @@ namespace Labb2
             }
             return null;
         }
+        // Se mina kommentarer nedan.
         static void AddRegistratedCustomers()
         {
             AddCustomer("Knatte", "123");
             AddCustomer("Fnatte", "321");
             AddCustomer("Tjatte", "213");
         }
+        // Se JSON-filen jag lagt tillför att se hur jag har tänkt mig
+        // att du ska ladda/spara dina produkter.
+        // Du måste läsa in filen och spara datan i en string variabel json.
+        // Se https://www.educative.io/answers/how-to-read-a-json-file-in-c-sharp
+        // Obs! den ska decerealize till en lista av Product (List<Product>).
+        // Se https://makolyte.com/csharp-deserialize-a-json-array-to-a-list/
         static void AddRegistratedProducts()
         {
             AddProducts("General, dosa", 51.90);
@@ -275,10 +289,12 @@ namespace Labb2
             AddProducts("LOOP Jalapeno/Lime, stock", 399.90);
 
         }
+        // AddCustomer bör returnera en Customer.
         public static void AddCustomer(string name, string password)
         {
             customers.Add(new Customer(name, password));
         }
+        // AddProducts bör returnera en Product.
         public static void AddProducts(string name, double price)
         {
             products.Add(new Product(name, price));

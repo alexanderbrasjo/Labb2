@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "name": "General, dosa",
+        "price": 51.90
+    },
+    {
+        "id": 2,
+        "name": "General, stock",
+        "price": 479.90
+    }
+]

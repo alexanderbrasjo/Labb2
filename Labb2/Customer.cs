@@ -10,6 +10,8 @@ namespace Labb2
     {
         private string Name { get; }
         private string Password { get; set; }
+        // Jag tror inte att det är en bra idé att ha en lista av produkter i kundklassen.
+        // Det är bättre att ha en lista av produkter i en kundvagnsklass.
         private List<Product> _cart;
         public List<Product> Cart { get { return _cart; } }
         public Customer(string name, string password)
@@ -30,7 +32,7 @@ namespace Labb2
         {
             get { return Name; }
         }
-        
+
         public string password
         {
             get { return Password; }
