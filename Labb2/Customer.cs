@@ -6,35 +6,42 @@ using System.Threading.Tasks;
 
 namespace Labb2
 {
-    public class Customer
+    internal class Customer
     {
-        private string Name { get; }
-        private string Password { get; set; }
-        private List<Product> _cart;
-        public List<Product> Cart { get { return _cart; } }
+        //public int Id { get; set; }
+        private string _name;
+        private string _password;
+        private Cart _myCart = new Cart();
+        
         public Customer(string name, string password)
         {
-            Name = name;
-            Password = password;
-            _cart = new List<Product>();
+            _name = name;
+            _password = password;
+            _myCart = new Cart();
         }
-        public void ShoppingProducts()
-        {
+        //public void ShoppingProducts()
+        //{
 
-        }
-        public void ToString()
-        {
+        //}
+        //public void ToString()
+        //{
 
-        }
-        public string name
+        //}
+        public string Name
         {
-            get { return Name; }
+            get { return _name; }
+        }
+        public string Password
+        {
+            get { return _password; }
+            set { _password = value; }
+        }
+        public List<CartItem> Cart
+        {
+            get { return _myCart.CartItems; }
+            set { _myCart.CartItems = value; }
         }
         
-        public string password
-        {
-            get { return Password; }
-            set { Password = value; }
-        }
+        
     }
 }

@@ -1,4 +1,8 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using Microsoft.VisualBasic;
+using System;
+using System.ComponentModel.Design;
+using System.Reflection.Metadata.Ecma335;
+using System.Text.Json;
 
 namespace Labb2
 {
@@ -16,7 +20,7 @@ namespace Labb2
 
         static void Main(string[] args)
         {
-            
+            //CreateRegistratedCustomers();
             RunProgram();
             //foreach(Customer c in customers)
             //{
@@ -38,8 +42,8 @@ namespace Labb2
         }
         static void RunProgram()
         {
-            AddRegistratedCustomers();
-            AddRegistratedProducts();
+            CreateRegistratedCustomers();
+            CreateRegistratedProducts();
             StartMenu();
         }
         static void StartMenu()
@@ -70,69 +74,84 @@ namespace Labb2
         }
         static void MainMenu()
         {
-            Console.Clear();
-            Console.WriteLine("******  SNUSBOLAGET  ******\n\n");
-            Console.WriteLine($"Logged in as {activeCustomer.name} \n");
-            Console.WriteLine("1. SHOP");
-            Console.WriteLine("2. SHOW CART");
-            Console.WriteLine("3. CHECKOUT");
-            string input = Console.ReadLine();
-
-            switch (input)
+            bool loggedIn = true;
+            while (loggedIn)
             {
-                case "1":
-                    ShopMenu();
-                    break;
-                case "2":
-                    ShowCart();
-                    break;
-                case "3":
 
-                    break;
-                default:
+                Console.Clear();
+                Console.WriteLine("******  SNUSBOLAGET  ******\n\n");
+                Console.WriteLine($"Logged in as {activeCustomer.Name} \n");
+                Console.WriteLine("1. SHOP");
+                Console.WriteLine("2. SHOW CART");
+                Console.WriteLine("3. CHECKOUT");
+                Console.WriteLine("9. LOG OUT");
+                string input = Console.ReadLine();
 
-                    break;
+                switch (input)
+                {
+                    case "1":
+                        ShopMenu();
+                        break;
+                    case "2":
+                        ShowCart();
+                        break;
+                    case "3":
+                        //CheckOut();
+                        break;
+                    case "9":
+                        loggedIn = false;
+                        break;
+                    default:
+
+                        break;
+                }
             }
+            StartMenu();
         }
         static void ShowCart()
         {
             Console.WriteLine("******  SNUSBOLAGET  ******\n\n");
-            Console.WriteLine($"Logged in as {activeCustomer.name} \n");
+            Console.WriteLine($"Logged in as {activeCustomer.Name} \n");
 
-            List<Product> tempList = new List<Product>(activeCustomer.Cart);
+            //List<Product> tempList = new List<Product>(activeCustomer.Cart);
 
+            //for (int i = 0; i < tempList.Count; i++)
+            //{
+            //    if (tempList.ElementAt(i).Name == "")
+            //    {
+            //        continue;
+            //    }
+            //    int productCounter = 1;
+            //    for (int j = i + 1; j < tempList.Count; j++)
+            //    {
+            //        Console.WriteLine($"{tempList.ElementAt(i).Name}, {tempList.ElementAt(j).Name}");
+            //        if (tempList.ElementAt(j).Name.Equals(""))
+            //        {
+            //            continue;
+            //        }
+            //        if (tempList.ElementAt(i).Equals(tempList.ElementAt(j)))
+            //        {
+            //            productCounter++;
+            //            tempList.ElementAt(j).Name = "";
+            //        }
+            //    }
+            //    Console.WriteLine($"antal likadana: {tempList.ElementAt(i).Name} = {productCounter}");
+            //    tempList.ElementAt(i).name = "";
+            //}
 
-            for (int i = 0; i < tempList.Count - 1; i++)
+            foreach (CartItem p in activeCustomer.Cart)
             {
-                if(tempList.ElementAt(i).name == "pitt")
-                {
-                    continue;
-                }
-                int productCounter = 0;
-                for(int j = i + 1; j < tempList.Count; j++)
-                {
-                    Console.WriteLine($"{tempList.ElementAt(i).name}, {tempList.ElementAt(j).name}");
-                    if (tempList.ElementAt(j).name.Equals("pitt"))
-                    {
-                        continue;
-                    }
-                    if (tempList.ElementAt(i).Equals(tempList.ElementAt(j)))
-                    {
-                        productCounter++;
-                        tempList.ElementAt(j).name = "pitt";
-                    }
-                }
-                Console.WriteLine($"antal likadana: {tempList.ElementAt(i).name} = {productCounter}");
-                //tempList.ElementAt(i).name = "";
+                Console.Write($"{p.Name}     {p.Price}    {p.Amount}     {p.Total}  \n");
             }
+            Console.ReadKey();
         }
         static void PrintProducts()
         {
             Console.WriteLine("******  SNUSBOLAGET  ******\n\n");
-            Console.WriteLine($"Logged in as {activeCustomer.name} \n");
+            Console.WriteLine($"Logged in as {activeCustomer.Name} \n");
             foreach (Product p in products)
             {
-                Console.WriteLine($"{products.IndexOf(p) + 1}. {p.name}         {p.price} ");
+                Console.WriteLine($"{products.IndexOf(p) + 1}.\t{p.Name}\t\t{p.Price} kr");
             }
             Console.WriteLine("Please use the line number to choose product");
         }
@@ -144,17 +163,17 @@ namespace Labb2
             bool keepShopping = true;
             while (keepShopping)
             {
-                Console.Write($" I want the product on line: ");
+                Console.Write($"I want the product on line: ");
                 int productChoice = Convert.ToInt32(Console.ReadLine());
                 
                 Product shoppedProduct = products.ElementAt(productChoice - 1);
-                Console.Write($"{shoppedProduct.name}, How many? ");
+                Console.Write($"{shoppedProduct.Name}, How many? ");
                 int countOfProduct = Convert.ToInt32(Console.ReadLine());
-                for(int i = 0; i < countOfProduct; i++)
-                {
-                    activeCustomer.Cart.Add(shoppedProduct);
-                }
-                Console.WriteLine($"Putting {countOfProduct} {shoppedProduct.name} in your cart");
+                CartItem cartItem = new CartItem(shoppedProduct.Name,shoppedProduct.Price, countOfProduct);
+                activeCustomer.Cart.Add(cartItem);
+                Console.WriteLine($"prdouct = {cartItem.Name} Pris = {cartItem.Price} antal = {cartItem.Amount} total = {cartItem.Total}");
+                Console.WriteLine($"Putting {countOfProduct} {shoppedProduct.Name} in your cart");
+                Console.WriteLine($"prdouct = {cartItem.Name} Pris = {cartItem.Price} antal = {cartItem.Amount}  total = {cartItem.Total}");
                 Console.Write("Do you want something else? Y or N ");
                 string continueShopping = Console.ReadLine().ToUpper();
                 if (continueShopping.Equals("Y"))
@@ -167,12 +186,6 @@ namespace Labb2
                 }
 
             }
-            foreach (Product p in activeCustomer.Cart)
-            {
-                Console.WriteLine($"shopping items : {p.name} och {p.price}");
-
-            }
-            MainMenu();
 
 
         }
@@ -183,19 +196,11 @@ namespace Labb2
             string userName = Console.ReadLine();
             Console.Write("Please enter a password: ");
             string passWord = Console.ReadLine();
-            foreach (Customer c in customers)
-            {
-                Console.WriteLine(c.name);
-            }
-            AddCustomer(userName, passWord);
+            
+            activeCustomer = CreateCustomer(userName, passWord);
 
-            activeCustomer = GetCustomer(userName); //new Customer(customers.ElementAt(customers.Count() - 1).name, customers.ElementAt(customers.Count() - 1).password);
             return true;
-            foreach (Customer c in customers)
-            {
-                Console.WriteLine(c.name);
-            }
-            Console.WriteLine(activeCustomer.name + " " + activeCustomer.password);
+            
 
 
 
@@ -223,7 +228,7 @@ namespace Labb2
             {
                 Console.Write("Please enter your password: ");
                 string passWord = Console.ReadLine();
-                if (temporaryCustomer.password.Equals(passWord))
+                if (temporaryCustomer.Password.Equals(passWord))
                 {
                     Console.WriteLine("Access Granted");
                     activeCustomer = temporaryCustomer;
@@ -244,44 +249,67 @@ namespace Labb2
             return false;
 
         }
-        static Customer GetCustomer(string user)
+        static Customer? GetCustomer(string user)
         {
             foreach(Customer c in customers) 
             {
-                if (c.name.Equals(user))
+                if (c.Name.Equals(user))
                 {
                     return c;
                 }
             }
             return null;
         }
-        static void AddRegistratedCustomers()
+        static void CreateRegistratedCustomers()
         {
-            AddCustomer("Knatte", "123");
-            AddCustomer("Fnatte", "321");
-            AddCustomer("Tjatte", "213");
+            //string currentDirectory = System.IO.Directory.GetCurrentDirectory();
+            //Console.WriteLine("Current Working Directory: " + currentDirectory);
+
+            //if (File.Exists(@"./data/customers.json"))
+            //{
+            //    Console.WriteLine("Jupp");
+            //}
+            //string text = File.ReadAllText(@".\\data\\customers.json");
+            //Console.WriteLine(text);
+            //List<Customer> customers = JsonSerializer.Deserialize<List<Customer>>(text);
+
+            //Console.WriteLine($"Account name: {customers[0].Name}");
+            //Console.WriteLine($"Password: {customers[0].Password}");
+
+            CreateCustomer("Knatte", "123");
+            CreateCustomer("Fnatte", "321");
+            CreateCustomer("Tjatte", "213");
         }
-        static void AddRegistratedProducts()
+        
+
+        static void CreateRegistratedProducts()
         {
-            AddProducts("General, dosa", 51.90);
-            AddProducts("General, stock", 479.90);
-            AddProducts("Göteborgs Rape, dosa", 48.90);
-            AddProducts("Göteborgs Rape, stock", 449.90);
-            AddProducts("Ettan lös, dosa", 54.90);
-            AddProducts("Ettan lös, stock", 499.90);
-            AddProducts("Lundgrens Skåne, dosa", 41.90);
-            AddProducts("Lundgrens Skåne, stock", 389.90);
-            AddProducts("LOOP Jalapeno/Lime, dosa", 43.90);
-            AddProducts("LOOP Jalapeno/Lime, stock", 399.90);
+            CreateProduct("General, dosa", 51.90M);
+            CreateProduct("General, stock", 479.90M);
+            CreateProduct("Göteborgs Rape, dosa", 48.90M);
+            CreateProduct("Göteborgs Rape, stock", 449.90M);
+            CreateProduct("Ettan lös, dosa", 54.90M);
+            CreateProduct("Ettan lös, stock", 499.90M);
+            CreateProduct("Lundgrens Skåne, dosa", 41.90M);
+            CreateProduct("Lundgrens Skåne, stock", 389.90M);
+            CreateProduct("LOOP Jalapeno/Lime, dosa", 43.90M);
+            CreateProduct("LOOP Jalapeno/Lime, stock", 399.90M);
 
         }
-        public static void AddCustomer(string name, string password)
+        static Customer CreateCustomer(string name, string password)
         {
-            customers.Add(new Customer(name, password));
+            Customer customer = new Customer(name, password);
+
+            customers.Add(customer);
+            return customer;
+
         }
-        public static void AddProducts(string name, double price)
+        static Product CreateProduct(string name, decimal price)
         {
-            products.Add(new Product(name, price));
+            Product product = new Product(name, price);
+
+            products.Add(product);
+            return product;
         }
     }
 }
