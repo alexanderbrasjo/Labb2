@@ -49,11 +49,12 @@ namespace Labb2
         static void StartMenu()
         {
             Console.Clear();
-            Console.WriteLine("******  WELCOME TO SNUSBOLAGET  ******\n\n");
+            PrintHeader();
             Console.WriteLine("1.  Log in");
             Console.WriteLine("2.  Register new account");
+            Console.Write("Enter the line number you want to use: ");
             string input = Console.ReadLine();
-
+            
             switch (input)
             {
                 case "1":
@@ -64,9 +65,11 @@ namespace Labb2
                     break;
                 case "2":
                     RegisterNewAccount();
+                    MainMenu();
                     break;
                 default:
                     Console.WriteLine("Please choose one of the options");
+                    StartMenu();
                     break;
 
             }
@@ -77,14 +80,13 @@ namespace Labb2
             bool loggedIn = true;
             while (loggedIn)
             {
-
                 Console.Clear();
-                Console.WriteLine("******  SNUSBOLAGET  ******\n\n");
-                Console.WriteLine($"Logged in as {activeCustomer.Name} \n");
+                PrintLoggedInHeader();
                 Console.WriteLine("1. SHOP");
                 Console.WriteLine("2. SHOW CART");
                 Console.WriteLine("3. CHECKOUT");
                 Console.WriteLine("9. LOG OUT");
+                Console.Write("Enter the line number you want to use: ");
                 string input = Console.ReadLine();
 
                 switch (input)
@@ -109,56 +111,154 @@ namespace Labb2
             StartMenu();
         }
         static void ShowCart()
+
         {
+            
+            bool finished = false;
+            while (!finished)
+            {
+                Console.Clear();
+                PrintLoggedInHeader();
+
+                if (activeCustomer.Cart.Count == 0)
+                {
+                    Console.Clear();
+                    PrintLoggedInHeader();
+                    Console.WriteLine("Your cart is empty.");
+                }
+                activeCustomer.PrintCart();
+                Console.WriteLine("1. REMOVE ITEM");
+                Console.WriteLine("2. EMPTY CART");
+                Console.WriteLine("3. CONTINUE SHOPPING");
+                Console.WriteLine("4. GO TO CHECKOUT");
+                Console.WriteLine("9. MAIN MENU");
+                Console.Write("Enter the line number you want to use: ");
+                string choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        RemoveProducts();
+                        break;
+                    case "2":
+                        if (EmptyMyCart())
+                        {
+                            finished = true;
+                        }
+                        break;
+                    case "3":
+                        ShopMenu();
+                        finished = true;
+                        break;
+                    case "4":
+
+                        break;
+                    case "9":
+                        finished = true;
+                        break;
+
+                }
+            }
+        }
+        static void CheckOut()
+        {
+            PrintLoggedInHeader();
+            activeCustomer.PrintCart();
+            Console.WriteLine("1. GO TO PAYMENT");
+            Console.WriteLine("9. MAIN MENU");
+            Console.Write("Enter the line number you want to use: ");
+            string choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1":   
+                    Payment()
+                        break;
+                case "9":
+                    MainMenu();
+                    break;
+            }
+
+        }
+        static void Payment()
+        {
+            PrintLoggedInHeader();
+
+        }
+
+        static void PrintHeader()
+        {
+            Console.Clear();
+            Console.WriteLine("******  SNUSBOLAGET  ******\n\n");
+            
+        }
+        static void PrintLoggedInHeader()
+        {
+            Console.Clear();
             Console.WriteLine("******  SNUSBOLAGET  ******\n\n");
             Console.WriteLine($"Logged in as {activeCustomer.Name} \n");
-
-            //List<Product> tempList = new List<Product>(activeCustomer.Cart);
-
-            //for (int i = 0; i < tempList.Count; i++)
-            //{
-            //    if (tempList.ElementAt(i).Name == "")
-            //    {
-            //        continue;
-            //    }
-            //    int productCounter = 1;
-            //    for (int j = i + 1; j < tempList.Count; j++)
-            //    {
-            //        Console.WriteLine($"{tempList.ElementAt(i).Name}, {tempList.ElementAt(j).Name}");
-            //        if (tempList.ElementAt(j).Name.Equals(""))
-            //        {
-            //            continue;
-            //        }
-            //        if (tempList.ElementAt(i).Equals(tempList.ElementAt(j)))
-            //        {
-            //            productCounter++;
-            //            tempList.ElementAt(j).Name = "";
-            //        }
-            //    }
-            //    Console.WriteLine($"antal likadana: {tempList.ElementAt(i).Name} = {productCounter}");
-            //    tempList.ElementAt(i).name = "";
-            //}
-
-            foreach (CartItem p in activeCustomer.Cart)
-            {
-                Console.Write($"{p.Name}     {p.Price}    {p.Amount}     {p.Total}  \n");
-            }
-            Console.ReadKey();
+            
         }
         static void PrintProducts()
         {
-            Console.WriteLine("******  SNUSBOLAGET  ******\n\n");
-            Console.WriteLine($"Logged in as {activeCustomer.Name} \n");
+            
             foreach (Product p in products)
             {
                 Console.WriteLine($"{products.IndexOf(p) + 1}.\t{p.Name}\t\t{p.Price} kr");
             }
             Console.WriteLine("Please use the line number to choose product");
         }
+        static bool EmptyMyCart() 
+        {
+            Console.WriteLine("Do you really want to empty your cart? Y or N");
+            string input = Console.ReadLine();
+            if(input.ToUpper().Equals("Y"))
+            {
+                Console.WriteLine("Removed all items in your cart.");
+                activeCustomer.EmptyCart();
+                return true;
+            }
+            return false;
+        }
+        static void RemoveProducts()
+        {
+            bool finished = false;
+            while (!finished)
+            {
+                Console.Clear();
+                PrintLoggedInHeader();
+                activeCustomer.PrintCart();
+                Console.Write("Remove from line?: ");
+                int choice = Convert.ToInt32(Console.ReadLine());
+
+                CartItem tempCartItem = activeCustomer.GetCartItemFromIndex(choice - 1);
+                Console.Write("How many do you want to remove?: ");
+                choice = Convert.ToInt32(Console.ReadLine());
+
+                //Console.WriteLine($"Confirm removing {choice} {tempCartItem.Name} from you cart, ");
+                activeCustomer.RemoveProductFromMyCart(tempCartItem, choice);
+                Console.WriteLine($"Removed {choice} {tempCartItem.Name} from your cart");
+                Console.WriteLine("You want to remove something else? Press Y or N");
+                string stringChoice = Console.ReadLine();
+
+                if(stringChoice.ToUpper() == "N")
+                {
+                    finished = true;
+                    continue;
+                }
+
+                if(stringChoice.ToUpper() != "Y")
+                {
+                    Console.WriteLine("Please choose between 'Y' or 'N'");
+                }
+
+                //activeCustomer.PrintCart();
+                //Console.ReadKey();
+            }
+        }
 
         static void ShopMenu()
         {
             Console.Clear();
+            PrintLoggedInHeader();
             PrintProducts();
             bool keepShopping = true;
             while (keepShopping)
@@ -169,13 +269,15 @@ namespace Labb2
                 Product shoppedProduct = products.ElementAt(productChoice - 1);
                 Console.Write($"{shoppedProduct.Name}, How many? ");
                 int countOfProduct = Convert.ToInt32(Console.ReadLine());
-                CartItem cartItem = new CartItem(shoppedProduct.Name,shoppedProduct.Price, countOfProduct);
-                activeCustomer.Cart.Add(cartItem);
-                Console.WriteLine($"prdouct = {cartItem.Name} Pris = {cartItem.Price} antal = {cartItem.Amount} total = {cartItem.Total}");
+
                 Console.WriteLine($"Putting {countOfProduct} {shoppedProduct.Name} in your cart");
-                Console.WriteLine($"prdouct = {cartItem.Name} Pris = {cartItem.Price} antal = {cartItem.Amount}  total = {cartItem.Total}");
+                activeCustomer.AddProductToMyCart(shoppedProduct, countOfProduct);
+
                 Console.Write("Do you want something else? Y or N ");
                 string continueShopping = Console.ReadLine().ToUpper();
+
+                Console.WriteLine($"prdouct = {shoppedProduct.Name} Pris = {shoppedProduct.Price} antal = {countOfProduct} total = {shoppedProduct.Price * countOfProduct}");
+                Console.WriteLine(activeCustomer.Cart.Count);
                 if (continueShopping.Equals("Y"))
                 {
                     continue;
@@ -192,49 +294,61 @@ namespace Labb2
         static bool RegisterNewAccount()
         {
             Console.Clear();
-            Console.Write("Please enter the username you like to use: ");
-            string userName = Console.ReadLine();
-            Console.Write("Please enter a password: ");
-            string passWord = Console.ReadLine();
-            
-            activeCustomer = CreateCustomer(userName, passWord);
+            Console.WriteLine("******  SNUSBOLAGET  ******\n\n");
 
+            bool checkingRegistration = false;
+            while (!checkingRegistration)
+            {
+                Console.Write("Please enter the username you like to use: ");
+                string userName = Console.ReadLine();
+
+                if (GetCustomer(userName) == null)
+                {
+                    Console.Write("Please enter a password: ");
+                    string passWord = Console.ReadLine();
+                    activeCustomer = CreateCustomer(userName, passWord);
+                    customers.Add(activeCustomer);
+                    checkingRegistration = true;
+                    continue;
+                }
+
+                Console.WriteLine("The account name is already used.");
+
+            }
             return true;
-            
-
-
-
-            //Console.Write("Please confirm your password: ");
-            //string confirmPassword = Console.ReadLine();
-            //if(!passWord.Equals(confirmPassword))
-            //{
-            //    Console.WriteLine("Your ");
-            //    AddCustomer(userName, passWord);
-            //}
-            //else
-            //{
-            //    cw
-            //}
         }
+
         static bool LogIn()
         {
 
             Console.Clear();
             Console.WriteLine("******  SNUSBOLAGET  ******\n\n");
             Console.Write("Please enter your accountname: ");
+            
             string userName = Console.ReadLine();
             Customer  temporaryCustomer = GetCustomer(userName);
-            if (temporaryCustomer != null)
+            if(temporaryCustomer != null)
             {
-                Console.Write("Please enter your password: ");
-                string passWord = Console.ReadLine();
-                if (temporaryCustomer.Password.Equals(passWord))
+                for(int wrong = 2; wrong >= 0; wrong--)
                 {
-                    Console.WriteLine("Access Granted");
-                    activeCustomer = temporaryCustomer;
-                    return true;
+                    Console.Write("Please enter your password: ");
+                    string passWord = Console.ReadLine();
+                    if (temporaryCustomer.Password.Equals(passWord))
+                    {
+                        activeCustomer = temporaryCustomer;
+                        return true;
+                    }
+                    if(wrong > 0)
+                    {
+                        Console.WriteLine("Wrong password, please try again! (You got " + wrong + " tries left)");
+                    }
+
                 }
+                Console.WriteLine("Try another day!");
+                return false;
             }
+            
+
             
             Console.WriteLine($"{userName} is not a valid username");
             Console.WriteLine($"Maybe you haven't registered an account yet, Do you like to registrate a new account? Press Y or N.");
@@ -244,10 +358,21 @@ namespace Labb2
                 Console.WriteLine("Please press enter to 'Register new account' on the next menu");
                 Console.ReadKey();
                 StartMenu();
-                return true;
             }
             return false;
 
+        }
+       
+        static CartItem? GetCartItem(string name)
+        {
+            foreach (CartItem c in activeCustomer.Cart)
+            {
+                if (c.Name.Equals(name))
+                {
+                    return c;
+                }
+            }
+            return null;
         }
         static Customer? GetCustomer(string user)
         {
@@ -284,16 +409,16 @@ namespace Labb2
 
         static void CreateRegistratedProducts()
         {
-            CreateProduct("General, dosa", 51.90M);
-            CreateProduct("General, stock", 479.90M);
-            CreateProduct("Göteborgs Rape, dosa", 48.90M);
-            CreateProduct("Göteborgs Rape, stock", 449.90M);
-            CreateProduct("Ettan lös, dosa", 54.90M);
-            CreateProduct("Ettan lös, stock", 499.90M);
-            CreateProduct("Lundgrens Skåne, dosa", 41.90M);
-            CreateProduct("Lundgrens Skåne, stock", 389.90M);
-            CreateProduct("LOOP Jalapeno/Lime, dosa", 43.90M);
-            CreateProduct("LOOP Jalapeno/Lime, stock", 399.90M);
+            CreateProduct("General dosa", 51.90M);
+            CreateProduct("General stock", 479.90M);
+            CreateProduct("Göteborgs Rape dosa", 48.90M);
+            CreateProduct("Göteborgs Rape stock", 449.90M);
+            CreateProduct("Ettan lös dosa", 54.90M);
+            CreateProduct("Ettan lös stock", 499.90M);
+            CreateProduct("Lundgrens Skåne dosa", 41.90M);
+            CreateProduct("Lundgrens Skåne stock", 389.90M);
+            CreateProduct("LOOP Jalapeno/Lime dosa", 43.90M);
+            CreateProduct("LOOP Jalapeno/Lime stock", 399.90M);
 
         }
         static Customer CreateCustomer(string name, string password)

@@ -8,38 +8,50 @@ namespace Labb2
 {
     internal class CartItem
     {
-        private string _name;
-        private decimal _price;
-        private int _amount;
-        private decimal _total;
-        public CartItem(string name, decimal price, int amount)
+        public Product _product;
+        public int _amount;
+        public decimal _total;
+        public CartItem(Product product, int amount)
         {
-            _name = name;
-            _price = price;
+            _product = product;
             _amount = amount;
-            _total = amount * price;
+            _total = amount * product.Price;
 
+        }
+        public Product Product
+        {
+            get { return _product; }
         }
         public string Name
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return _product.Name; }
         }
         public decimal Price
         {
-            get { return _price; }
-            set { _price = value; }
+            get { return _product.Price; }
         }
         public int Amount
         {
             get { return _amount; }
-            set { _amount = value; _total = value * _price;  }
+            set { _amount = value; }
         }
-        public decimal Total
+        public void RemoveOne()
         {
-            get { return _total; }
+            if(_amount > 0)
+            {
+                _amount--;
+            }
+        }
+        public void AddOne()
+        {
+            _amount++;
+        }
+        public decimal TotalPrice()
+        {
+            return _amount * _product.Price;
         }
         
+
 
     }
 }

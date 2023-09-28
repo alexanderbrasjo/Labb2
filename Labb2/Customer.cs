@@ -41,7 +41,25 @@ namespace Labb2
             get { return _myCart.CartItems; }
             set { _myCart.CartItems = value; }
         }
-        
-        
+        public void AddProductToMyCart(Product product,int count)
+        {
+            _myCart.AddProduct(product, count);
+        }
+        public void PrintCart()
+        {
+            Console.WriteLine(_myCart.PrintCartToConsole());
+        }
+        public void EmptyCart()
+        {
+            _myCart.RemoveAllCartItems();
+        }
+        public void RemoveProductFromMyCart(CartItem cartItem, int amount)
+        {
+            _myCart.RemoveProductFromCart(cartItem, amount);
+        }
+        public CartItem GetCartItemFromIndex(int index)
+        {
+            return _myCart.GetCartItemFromIndex(index);
+        }
     }
 }
