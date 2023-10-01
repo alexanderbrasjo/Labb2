@@ -6,26 +6,28 @@ using System.Threading.Tasks;
 
 namespace Labb2
 {
-    public class Product
+    internal class Product
     {
-        private string Name { get; set; }
-        private double Price { get; set; }
+        private string _name;
+        private decimal _price;
 
-        public Product(string name, double price)
+        public Product(string name, decimal price)
         {
-            Name = name;
-            Price = price;
+            _name = name;
+            _price = price;
+
         }
 
-        public string name
+        public string Name
         {
-            get { return Name; }
-            set { Name = value; }
+            get { return _name; }
+            set { _name = value; }
         }
-        public double price
+        public decimal Price
         {
-            get { return Price; }
-            set { Price = value; }
+            get { return _price; }
+            set { _price = value; }
         }
+        
     }
 }
