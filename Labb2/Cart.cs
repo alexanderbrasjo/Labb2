@@ -61,17 +61,17 @@ namespace Labb2
             }
 
         }
-        public string PrintCartToConsole() 
+        
+        
+        
+        public decimal GetTotalPrice() 
         {
-            string cartPrint = "";
-            int cartIndex = 0;
-            
+            decimal totalSum = 0M;
             foreach (CartItem cartItem in _cartItems)
             {
-                cartIndex++;
-                cartPrint += cartIndex.ToString() + ". "  + cartItem.Name + " , " + cartItem.Price.ToString() + " * " + cartItem.Amount.ToString() + "  " + cartItem.TotalPrice().ToString() + " SEK\n";
+                totalSum += cartItem.TotalPrice();
             }
-            return cartPrint;
+            return totalSum;
         }
         public void RemoveAllCartItems()
         {

@@ -28,5 +28,6 @@ namespace Labb2
             get { return _price; }
             set { _price = value; }
         }
+        
     }
 }

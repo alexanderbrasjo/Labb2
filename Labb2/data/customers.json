@@ -3,21 +3,24 @@
 
     "Id": 1,
     "Name": "Knatte",
-    "Password": "123"
+    "Password": "123",
+    "Currency": "SEK"
 
   },
   {
 
     "Id": 2,
     "Name": "Fnatte",
-    "Password": "321"
+    "Password": "321",
+    "Currency": "USD"
 
   },
   {
 
     "Id": 3,
     "Name": "Tjatte",
-    "Password": "213"
+    "Password": "213",
+    "Currency": "GBP"
 
   }
 ]
